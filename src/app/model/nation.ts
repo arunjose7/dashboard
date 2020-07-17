@@ -3,7 +3,6 @@ import { NewCase } from './newcase';
 import { State } from './state';
 
 export interface Nation {
-    [x: string]: any;
     status : Status,
     newCase : NewCase,
     states : State[]
