@@ -1,0 +1,185 @@
+<h3>Global Status</h3>
+<hr>
+<div [ngSwitch] ="consolidatedViewMode">
+    <div *ngSwitchCase = "'global-total'">
+        <div class="row">
+            <div class="col-md-3">
+                <app-summary-panel>
+                    <ng-container class="heading">
+                        <h3 class="text-center">Total Confirmed</h3>
+                    </ng-container>
+                    <ng-container class="body">
+                        <h4 class="text-center">{{ globalStatus?.consolidated.totalConfirmed | number:'1.0':'en-US' }}</h4>
+                    </ng-container>
+                </app-summary-panel>
+            </div>
+            <div class="col-md-3">
+                <app-summary-panel>
+                    <ng-container class="heading">
+                        <h3 class="text-center">Active</h3>
+                    </ng-container>
+                    <ng-container class="body">
+                        <h4 class="text-center">{{ (globalStatus?.consolidated.totalConfirmed - globalStatus?.consolidated.totalRecovered) | number:'1.0':'en-US' }}</h4>
+                    </ng-container>
+                </app-summary-panel>
+            </div>
+            <div class="col-md-3">
+                <app-summary-panel>
+                    <ng-container class="heading">
+                        <h3 class="text-center">Deceased</h3>
+                    </ng-container>
+                    <ng-container class="body">
+                        <h4 class="text-center">{{ globalStatus?.consolidated.totalDeaths | number:'1.0':'en-US' }}</h4>
+                    </ng-container>
+                </app-summary-panel>
+            </div>
+            <div class="col-md-3">
+                <app-summary-panel>
+                    <ng-container class="heading">
+                        <h3 class="text-center">Recovered</h3>
+                    </ng-container>
+                    <ng-container class="body">
+                        <h4 class="text-center">{{ globalStatus?.consolidated.totalRecovered | number:'1.0':'en-US' }}</h4>
+                    </ng-container>
+                </app-summary-panel>
+            </div>
+        </div>
+    </div>
+    <div *ngSwitchCase = "'global-today'">
+        <div class="row">                    
+            <div class="col-md-4">
+                <app-summary-panel>
+                    <ng-container class="heading">
+                        <h3 class="text-center">Active</h3>
+                    </ng-container>
+                    <ng-container class="body">
+                        <h4 class="text-center">{{ globalStatus?.consolidated?.newConfirmed | number:'1.0':'en-US' }}</h4>
+                    </ng-container>
+                </app-summary-panel>
+            </div>
+            <div class="col-md-4">
+                <app-summary-panel>
+                    <ng-container class="heading">
+                        <h3 class="text-center">Deceased</h3>
+                    </ng-container>
+                    <ng-container class="body">
+                        <h4 class="text-center">{{ globalStatus?.consolidated?.newDeaths | number:'1.0':'en-US' }}</h4>
+                    </ng-container>
+                </app-summary-panel>
+            </div>
+            <div class="col-md-4">
+                <app-summary-panel>
+                    <ng-container class="heading">
+                        <h3 class="text-center">Recovered</h3>
+                    </ng-container>
+                    <ng-container class="body">
+                        <h4 class="text-center">{{ globalStatus?.consolidated?.newRecovered | number:'1.0':'en-US' }}</h4>
+                    </ng-container>
+                </app-summary-panel>
+            </div>
+        </div>
+    </div>
+</div>        
+<hr>
+<ul class="nav nav-tabs">
+    <li 
+        class="nav-item">
+        <a 
+            routerLink ="#" 
+            class="nav-link" 
+            [class.active] = "consolidatedViewMode == 'global-total'"
+            (click) = "changeMainDayMode('global-total')">
+            <b><h3>Total</h3></b> 
+        </a>
+    </li>
+    <li 
+        class="nav-item">
+        <a 
+            routerLink ="#" 
+            class="nav-link" 
+            [class.active] = "consolidatedViewMode == 'global-today'"
+            (click) = "changeMainDayMode('global-today')">
+            <b><h3>Today</h3></b>
+        </a>
+    </li>
+</ul>
+<hr>
+
+<div [ngSwitch] ="consolidatedViewMode">
+    <div *ngSwitchCase = "'global-total'">
+        <ag-grid-angular 
+            style="width: 100%; height: 500px;" 
+            class="ag-theme-balham"
+            [enableSorting]="true"
+            [enableFilter]="true"
+            [pagination]="true"
+            [rowData]="rowData" 
+            [columnDefs]="columnDefs"
+            (gridReady)="onGridReady($event)">
+        </ag-grid-angular>
+        <!-- <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="colgroup" class="text-center">#</th>
+                    <th scope="col" class="text-center">Country</th>
+                    <th scope="col" class="text-center">Total</th>
+                    <th scope="col" class="text-center">Active</th>
+                    <th scope="col" class="text-center">Deceased</th>
+                    <th scope="col" class="text-center">Recovered</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor = "let country of globalStatus?.countries; let i = index">
+                    <th class="text-center" scope="row">{{ i + 1}}</th>
+                    <td>{{ country.country }}</td>
+                    <td class="text-center">{{ country.totalConfirmed | number:'1.0':'en-US' }}</td>
+                    <td class="text-center">{{ (country.totalConfirmed - country.totalRecovered) | number:'1.0':'en-US' }}</td>
+                    <td 
+                        class="text-center"
+                        [ngStyle] = "{'color' : country.totalDeaths > 0 ? 'red' : 'black', 'font-weight' : country.totalDeaths > 0 ? 'bold' : 'normal' }">
+                        {{ country.totalDeaths | number:'1.0':'en-US' }}
+                    </td>
+                    <td class="text-center" [ngStyle] = "{'color' : country.TotalRecovered > 0 ? 'green' : 'black', 'font-weight' : 'bold' }">
+                        {{ country.totalRecovered | number:'1.0':'en-US' }}
+                    </td>
+                </tr>
+            </tbody>
+        </table> -->
+    </div>
+    <div *ngSwitchCase = "'global-today'"> 
+        <ag-grid-angular 
+            style="width: 100%; height: 500px;" 
+            class="ag-theme-balham"
+            [enableSorting]="true"
+            [enableFilter]="true"
+            [pagination]="true"
+            [rowData]="rowData" 
+            [columnDefs]="columnTodayDefs"
+            (gridReady)="onTodayGridReady($event)">
+        </ag-grid-angular>
+        <!-- <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="colgroup" class="text-center">#</th>
+                    <th scope="col" class="text-center">State</th>
+                    <th scope="col" class="text-center">Confirmed</th>
+                    <th scope="col" class="text-center">Deceased</th>
+                    <th scope="col" class="text-center">Recovered</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor = "let country of globalStatus?.countries; let i = index">
+                    <th class="text-center" scope="row">{{ i + 1}}</th>
+                    <td>{{ country.country }}</td>
+                    <td class="text-center">{{ country.newConfirmed }}</td>
+                    <td 
+                        class="text-center"
+                        [ngStyle] = "{'color' : country.newDeaths > 0 ? 'red' : 'black', 'font-weight' : country.newDeaths > 0 ? 'bold' : 'normal' }">
+                        {{ country.newDeaths }}
+                    </td>
+                    <td class="text-center" [ngStyle] = "{'color' : country.NewRecovered > 0 ? 'green' : 'black', 'font-weight' : 'bold' }">{{ country.newRecovered }}</td>
+                </tr>
+            </tbody>
+        </table> -->
+    </div>
+</div>

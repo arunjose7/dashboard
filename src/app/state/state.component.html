@@ -1,0 +1,108 @@
+<div class="row">
+    <div class="col-md-6">
+        <h2>{{ stateSelected.stateName }} Status</h2>
+    </div>
+</div>
+<hr>
+<app-summary [summary] = "stateSummary"></app-summary>    
+<hr>
+
+<ul class="nav nav-tabs">
+    <div class="clearFix"></div>
+    <li 
+        class="nav-item">
+        <a 
+            routerLink ="/covid/states"
+            class="nav-link" 
+            [class.active] = "viewMode == 'total'"
+            (click) = "changeViewMode('total')">
+            <b><h3>Total Cases</h3></b> 
+        </a>
+    </li>
+    <li 
+        class="nav-item">
+        <a 
+            routerLink ="/covid/states"
+            class="nav-link" 
+            [class.active] = "viewMode == 'today'"
+            (click) = "changeViewMode('today')">
+            <b><h3>Today Cases</h3></b>
+        </a>
+    </li>
+    <!-- <li class="nav-item dropdown ml-auto">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">States</a>
+        <div class="dropdown-menu dropdown-menu-left">
+            <a *ngFor = "let state of nationStatus?.states | orderBy : 'asc'"
+                class="dropdown-item"         
+                (click) = "onStateSelected(state.stateCode)">
+                {{ state.stateName}}
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Separated link</a>
+        </div>
+    </li> -->
+    <app-state-list [states] = "nationStatus?.states" (stateSelected)="onStateSelected($event)"></app-state-list>
+</ul>
+<hr>
+<div [ngSwitch] ="viewMode">
+    <div *ngSwitchCase = "'total'">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="colgroup" class="text-center">#</th>
+                    <th scope="col" class="text-center">District</th>
+                    <th scope="col" class="text-center">Total Confirmed</th>
+                    <th scope="col" class="text-center">Active</th>
+                    <th scope="col" class="text-center">Deceased</th>
+                    <th scope="col" class="text-center">Recovered</th>
+                    <th scope="col" class="text-center">Recovery Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor = "let district of stateSelected.districts; let i = index">
+                    <th class="text-center" scope="row">{{ i + 1}}</th>
+                    <td>{{ district.districtName }}</td>
+                    <td class="text-center">{{ district.status.total }}</td>
+                    <td class="text-center">{{ district.status.active }}</td>
+                    <td 
+                        class="text-center"
+                        [ngStyle] = "{'color' : district.status.deceased > 0 ? 'red' : 'black', 'font-weight' : district.status.deceased > 0 ? 'bold' : 'normal' }">
+                        {{ district.status.deceased }}
+                    </td>
+                    <td 
+                        class="text-center" 
+                        [ngStyle] = "{'color' : district.status.recovered > 0 ? 'green' : 'black', 'font-weight' : 'bold' }">
+                        {{ district.status.recovered }}
+                    </td>
+                    <td class="text-center">{{ (district.status.recovered / district.status.total) * 100 | number : '1.2-2'}}%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngSwitchCase = "'today'"> 
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="colgroup" class="text-center">#</th>
+                    <th scope="col" class="text-center">District</th>
+                    <th scope="col" class="text-center">Confirmed</th>
+                    <th scope="col" class="text-center">Deceased</th>
+                    <th scope="col" class="text-center">Recovered</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor = "let district of stateSelected.districts; let i = index">
+                    <th class="text-center" scope="row">{{ i + 1}}</th>
+                    <td>{{ district.districtName }}</td>
+                    <td class="text-center">{{ district.newStatus.confirmed }}</td>
+                    <td 
+                        class="text-center"
+                        [ngStyle] = "{'color' : district.newStatus.deceased > 0 ? 'red' : 'black', 'font-weight' : district.newStatus.deceased > 0 ? 'bold' : 'normal' }">
+                        {{ district.newStatus.deceased }}
+                    </td>
+                    <td class="text-center" [ngStyle] = "{'color' : district.newStatus.recovered > 0 ? 'green' : 'black', 'font-weight' : 'bold' }">{{ district.newStatus.recovered }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>  

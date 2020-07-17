@@ -1,0 +1,76 @@
+<div [ngSwitch] = "summary.viewMode">
+    <div *ngSwitchCase = "'total'" class="row">
+        <div class="col-md-3">
+            <app-summary-panel>
+                <ng-container class="heading">
+                    <h3 class="text-center">Total Confirmed</h3>
+                </ng-container>
+                <ng-container class="body">
+                    <h4 class="text-center">{{ summary?.status?.total }}</h4>
+                </ng-container>
+            </app-summary-panel>
+        </div>
+        <div class="col-md-3">
+            <app-summary-panel>
+                <ng-container class="heading">
+                    <h3 class="text-center">Active</h3>
+                </ng-container>
+                <ng-container class="body">
+                    <h4 class="text-center">{{ summary?.status?.active }}</h4>
+                </ng-container>
+            </app-summary-panel>
+        </div>
+        <div class="col-md-3">
+            <app-summary-panel>
+                <ng-container class="heading">
+                    <h3 class="text-center">Deceased</h3>
+                </ng-container>
+                <ng-container class="body">
+                    <h4 class="text-center">{{ summary?.status?.deceased }}</h4>
+                </ng-container>
+            </app-summary-panel>
+        </div>
+        <div class="col-md-3">
+            <app-summary-panel>
+                <ng-container class="heading">
+                    <h3 class="text-center">Recovered</h3>
+                </ng-container>
+                <ng-container class="body">
+                    <h4 class="text-center">{{ summary?.status?.recovered }} ({{(summary?.status?.recovered / summary?.status?.total) * 100 | number : '1.2-2'}}%)</h4>
+                </ng-container>
+            </app-summary-panel>
+        </div>
+    </div>
+    <div *ngSwitchCase = "'today'" class="row">                
+        <div class="col-md-4">
+            <app-summary-panel>
+                <ng-container class="heading">
+                    <h3 class="text-center">Active</h3>
+                </ng-container>
+                <ng-container class="body">
+                    <h4 class="text-center">{{ summary?.currentStatus?.total }}</h4>
+                </ng-container>
+            </app-summary-panel>
+        </div>
+        <div class="col-md-4">
+            <app-summary-panel>
+                <ng-container class="heading">
+                    <h3 class="text-center">Deceased</h3>
+                </ng-container>
+                <ng-container class="body">
+                    <h4 class="text-center">{{ summary?.currentStatus?.deceased }}</h4>
+                </ng-container>
+            </app-summary-panel>
+        </div>
+        <div class="col-md-4">
+            <app-summary-panel>
+                <ng-container class="heading">
+                    <h3 class="text-center">Recovered</h3>
+                </ng-container>
+                <ng-container class="body">
+                    <h4 class="text-center">{{ summary?.currentStatus?.recovered }}</h4>
+                </ng-container>
+            </app-summary-panel>
+        </div>
+    </div>
+</div>  
