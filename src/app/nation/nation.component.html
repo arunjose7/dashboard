@@ -1,12 +1,14 @@
-<h3>India Status</h3>
+<h3>All India Status</h3>
 <hr>
-<div [ngSwitch] ="consolidatedViewMode">
+<!-- <br> -->
+<app-summary [summaryObservable] = "countrySummary"></app-summary>  
+<!-- <div [ngSwitch] ="consolidatedViewMode">
     <div *ngSwitchCase = "'india-total'">
         <div class="row">
             <div class="col-md-3">
                 <app-summary-panel>
                     <ng-container class="heading">
-                        <h3 class="text-center">Total Confirmed</h3>
+                        <h3 class="text-center">Total</h3>
                     </ng-container>
                     <ng-container class="body">
                         <h4 class="text-center">{{ nationStatus?.status.total }}</h4>
@@ -39,7 +41,11 @@
                         <h3 class="text-center">Recovered</h3>
                     </ng-container>
                     <ng-container class="body">
-                        <h4 class="text-center">{{ nationStatus?.status.recovered }} ({{nationStatus?.status.recoveryRate | number : '1.2-2'}}%)</h4>
+                        <h4 
+                            class="text-center" 
+                            [ngStyle] = "{'color' : nationStatus?.status.recovered > 0 ? 'green' : 'black'}">
+                            {{ nationStatus?.status.recovered }} ({{nationStatus?.status.recoveryRate | number : '1.2-2'}}%)
+                        </h4>
                     </ng-container>
                 </app-summary-panel>
             </div>
@@ -79,35 +85,44 @@
             </div>
         </div>
     </div>
-</div>        
+</div>         -->
 <hr>
 
 <ul class="nav nav-tabs">
     <li 
         class="nav-item">
         <a 
-            routerLink ="/covid/india" 
+            href ="javascript:void(0);" 
             class="nav-link" 
-            [class.active] = "consolidatedViewMode == 'india-total'"
-            (click) = "changeMainDayMode('india-total')">
+            [class.active] = "consolidatedViewMode == 'total'"
+            (click) = "changeMainDayMode('total')">
             <b><h3>Total</h3></b> 
         </a>
     </li>
     <li 
         class="nav-item">
         <a 
-            routerLink ="/covid/india" 
+            href ="javascript:void(0);" 
             class="nav-link" 
-            [class.active] = "consolidatedViewMode == 'india-today'"
-            (click) = "changeMainDayMode('india-today')">
+            [class.active] = "consolidatedViewMode == 'today'"
+            (click) = "changeMainDayMode('today')">
             <b><h3>Today</h3></b>
         </a>
     </li>
 </ul>
-<hr>
 <div [ngSwitch] ="consolidatedViewMode">
-    <div *ngSwitchCase = "'india-total'">
-        <table class="table table-striped table-bordered table-hover">
+    <div *ngSwitchCase = "'total'">
+        <ag-grid-angular 
+            style="width: 100%; height: 500px;" 
+            class="ag-theme-balham"
+            [enableSorting]="true"
+            [enableFilter]="true"
+            [pagination]="true"
+            [rowData]="rowData" 
+            [columnDefs]="columnDefs"
+            (gridReady)="onGridReady($event)">
+        </ag-grid-angular>
+        <!-- <table class="table table-striped table-bordered table-hover">
             <thead>
                 <tr>
                     <th scope="colgroup" class="text-center">#</th>
@@ -135,10 +150,20 @@
                     <td class="text-center">{{ (state.status.recovered / state.status.total) * 100 | number : '1.2-2' }}</td>
                 </tr>
             </tbody>
-        </table>
+        </table> -->
     </div>
-    <div *ngSwitchCase = "'india-today'"> 
-        <table class="table table-striped table-bordered table-hover">
+    <div *ngSwitchCase = "'today'"> 
+        <ag-grid-angular 
+            style="width: 100%; height: 500px;" 
+            class="ag-theme-balham"
+            [enableSorting]="true"
+            [enableFilter]="true"
+            [pagination]="true"
+            [rowData]="rowData1" 
+            [columnDefs]="columnTodayDefs"
+            (gridReady)="onTodayGridReady($event)">
+        </ag-grid-angular>
+        <!-- <table class="table table-striped table-bordered table-hover">
             <thead>
                 <tr>
                     <th scope="colgroup" class="text-center">#</th>
@@ -161,6 +186,6 @@
                     <td class="text-center" [ngStyle] = "{'color' : state.newStatus.recovered > 0 ? 'green' : 'black', 'font-weight' : 'bold' }">{{ state.newStatus.recovered }}</td>
                 </tr>
             </tbody>
-        </table>
+        </table> -->
     </div>
 </div>

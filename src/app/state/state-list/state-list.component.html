@@ -1,27 +1,43 @@
 <div class="d-flex flex-row-reverse">    
-    <!-- <li class="nav-item dropdown ml-auto">
-        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">States</a>
+    <li class="nav-item dropdown ml-auto">
+        <a 
+          class="nav-link dropdown-toggle" 
+          data-toggle="dropdown" 
+          href="#" 
+          role="button" 
+          aria-haspopup="true" 
+          aria-expanded="false">States
+        </a>        
         <div class="dropdown-menu">
-            <a *ngFor = "let state of states | orderBy : 'asc'"
+          <input 
+            class="dropdown-item" 
+            name = "dropdownSearch" 
+            #dropdownSearch 
+            type="text" 
+            (keyup) = "onSearch(dropdownSearch)"
+            placeholder="Search..">
+            <p *ngIf = "stateList?.length === 0">No states found.</p>
+            <a *ngFor = "let state of stateList | orderBy : 'asc'"
                 class="dropdown-item"         
-                (click) = "onStateSelected(state.stateCode)">
+                (click) = "onStateSelected(state.stateName)">
                 {{ state.stateName}}
             </a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Separated link</a>
         </div>
-    </li> -->
-    <li class="nav-item dropdown">
+    </li>
+    
+    <!-- <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">States</a>
         <div class="dropdown-menu">
             <a *ngFor = "let state of states | orderBy : 'asc'"
-            class="dropdown-item"         
-            (click) = "onStateSelected(state.stateCode)">
+            class="dropdown-item"        
+            style="cursor: pointer;" 
+            [routerLink] = "['../', state.stateCode]">
             {{ state.stateName}}
           </a>
         </div>
       </li>
-    <!-- <div class="dropdown">
+    <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           States
         </button>
@@ -33,4 +49,6 @@
           </a>
         </div>
       </div>       -->
+
+      <!-- <ngx-select-dropdown (change)="selectionChanged($event)" [multiple]="true" [config]="config" [options]="options"></ngx-select-dropdown> -->
 </div>

@@ -6,6 +6,10 @@ import { Summary } from '../model/summary';
 import { StatusService } from '../services/status.service';
 import { AppError } from '../Exception/app.error';
 import { NotFoundError } from '../Exception/not-found-exception';
+import { District } from '../model/district';
+import { ActivatedRoute } from '@angular/router';
+import { combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-state',
@@ -21,26 +25,48 @@ export class StateComponent implements OnInit {
   currentState : string = 'KL';
   stateSummary : Summary
   
-  constructor(private statusService : StatusService) { }
+  constructor(private statusService : StatusService, private route : ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.statusService.getConsolidateData()
-    .subscribe(response => {
-      console.log(response);
-      this.nationStatus = response;
-      this.getStateStatus(this.currentState);
-    },
-    (error : AppError) => {
-      if(error instanceof NotFoundError)
-        console.log(error);
-      else
-        console.log(error);
+    combineLatest(this.route.params, this.route.queryParams)
+    .pipe(map(results =>({
+      params : results[0],
+      query : results[1]
+    })))
+    .subscribe(results =>{
+      this.statusService.getConsolidateData()
+      .subscribe(response => {
+        this.nationStatus = response;
+        this.getStateStatus(results.params['stateCode']);
+        if(results.query['today'] == 'true'){
+          this.changeViewMode('today');
+        }
+      },
+      (error : AppError) => {
+        if(error instanceof NotFoundError)
+          console.log(error);
+        else
+          console.log(error);
+      });  
     })
+    
+    // this.route.queryParams.subscribe(queryParam =>{
+    //   if(queryParam['today'] == 'true'){
+    //     console.log(queryParam['today']);
+    //     this.changeViewMode('today');
+    //     console.log(this.viewMode);
+    //   }
+    // });
+
+    // this.statusService.stateSelected
+    // .subscribe((state: { stateCode: string; }) =>{
+    //   console.log(state);
+    //   this.getStateStatus(state.stateCode);
+    // });
   }
 
   getStateStatus(stateCode : string){
-    this.stateSelected = this.nationStatus?.states.find(x => x.stateCode === stateCode);
-    // console.log(this.stateSelected);
+    this.stateSelected = this.nationStatus?.states.find(x => x.stateName === stateCode);
     this.stateSelected.districts.sort((a, b): number => this.getSorted(a, b));
     this.totalStatus = {
       active : this.getTotalActiveCases(),
@@ -56,7 +82,7 @@ export class StateComponent implements OnInit {
     };
   }
 
-  getSorted(a, b){
+  getSorted(a: District, b: District){
     if (a.status.total < b.status.total) return 1;
     if (a.status.total > b.status.total) return -1;
     return 0;
@@ -83,7 +109,7 @@ export class StateComponent implements OnInit {
     if(this.stateSelected.districts != null && this.stateSelected.districts.length > 0){
       this.stateSelected.districts.forEach(x => total += x.status.active);
     }
-    console.log(total);
+    // console.log(total);
     return total;
   }
 
@@ -92,7 +118,7 @@ export class StateComponent implements OnInit {
     if(this.stateSelected.districts != null && this.stateSelected.districts.length > 0){
       this.stateSelected.districts.forEach(x => total += x.status.recovered);
     }
-    console.log(total);
+    // console.log(total);
     return total;
   }
 
@@ -109,13 +135,13 @@ export class StateComponent implements OnInit {
     this.stateSummary.viewMode = mode;
   }
 
-  onStateChange(code : string){
-    this.getStateStatus(code);
-  }
+  // onStateChange(code : string){
+  //   this.getStateStatus(code);
+  // }
 
-  onStateSelected(eventArgs){
-    console.log(eventArgs);
-    this.getStateStatus(eventArgs.stateCode);
-  }
+  // onStateSelected(eventArgs: { stateCode: string; }){
+  //   console.log(eventArgs);
+  //   this.getStateStatus(eventArgs.stateCode);
+  // }
 
 }

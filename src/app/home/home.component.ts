@@ -14,9 +14,6 @@ export class HomeComponent implements OnInit {
 
   consolidatedViewMode = 'global-total';
   globalStatus : WorldStatus;
-
-  private gridApi;
-  private gridColumnApi;
   
   columnDefs = [
     {headerName: "Country", field: "country", width : 250},

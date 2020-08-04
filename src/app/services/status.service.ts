@@ -1,9 +1,9 @@
 import { HttpService } from './http.service';
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Nation } from '../model/nation';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-import { throwError, Observable } from 'rxjs';
+import { throwError, Observable, BehaviorSubject } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { State } from '../model/state';
 import { District } from '../model/district';
@@ -18,6 +18,10 @@ import { WorldStatus } from '../model/world-status';
     providedIn: 'root'
   })
 export class StatusService extends HttpService{
+
+    // stateSelected = new EventEmitter<{stateCode : string}>();
+    private stateSelected = new BehaviorSubject<{stateCode : string}>({stateCode : 'KL'});
+    stateSelected$ = this.stateSelected.asObservable();
     states: any[];
     status : Nation;
     
@@ -68,7 +72,7 @@ export class StatusService extends HttpService{
                     deceased : district.deceased,
                     recovered : district.recovered,
                     total : district.confirmed,
-                    recoveryRate : (district.recovered / district.confirmed) * 100 
+                    recoveryRate : Number(Number(district.confirmed > 0 ? ((district.recovered / district.confirmed) * 100) : 0).toFixed(2)) 
                   },
                   newStatus : {
                     confirmed : district.delta.confirmed,
@@ -77,6 +81,7 @@ export class StatusService extends HttpService{
                   }
                 });
               });
+              _stateStatus.recoveryRate = Number(Number(_stateStatus.total > 0 ? (_stateStatus.recovered + _stateStatus.deceased) / _stateStatus.total * 100 : 0).toFixed(2));
               _states.push({
                 stateCode : state.statecode,
                 stateName : state.state,
@@ -151,5 +156,9 @@ export class StatusService extends HttpService{
         return throwError (new NotFoundError(error));
   
       return throwError(new AppError(error));
+    }
+
+    OnStateSelected(code : string){
+      this.stateSelected.next({stateCode : code});
     }
 }
